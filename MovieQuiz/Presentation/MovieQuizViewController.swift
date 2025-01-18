@@ -5,16 +5,24 @@ final class MovieQuizViewController: UIViewController {
     @IBOutlet weak private var questionLable: UILabel!
     @IBOutlet weak private var imageView: UIImageView!
     // MARK: - Lifecycle
-    override func viewDidLoad() {
+    override  func viewDidLoad() {
         super.viewDidLoad()
         let currentQuestion = questions[currentQuestionIndex]
         let firstConvert = convert(model: currentQuestion)
         show(quiz: firstConvert)
     }
     @IBAction private func yesButtonClicked(_ sender: Any) {
+        let currentQuestion = questions[currentQuestionIndex]
+        let givenAnswer = true
+        showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
+        
     }
     
     @IBAction private func noButtonClicked(_ sender: Any) {
+        let currentQuestion = questions[currentQuestionIndex]
+        let givenAnswer = false
+        showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
+        
     }
     private let questions:[QuizQuestion] = [
         QuizQuestion(image: "The Godfather",
@@ -33,26 +41,26 @@ final class MovieQuizViewController: UIViewController {
                      text: "Рейтинг этого фильма больше чем 6?",
                      correctAnswer: true),
         QuizQuestion(
-                    image: "The Green Knight",
-                    text: "Рейтинг этого фильма больше чем 6?",
-                    correctAnswer: true),
+            image: "The Green Knight",
+            text: "Рейтинг этого фильма больше чем 6?",
+            correctAnswer: true),
         QuizQuestion(
-                    image: "Old",
-                    text: "Рейтинг этого фильма больше чем 6?",
-                    correctAnswer: false),
+            image: "Old",
+            text: "Рейтинг этого фильма больше чем 6?",
+            correctAnswer: false),
         QuizQuestion(
-                    image: "The Ice Age Adventures of Buck Wild",
-                    text: "Рейтинг этого фильма больше чем 6?",
-                    correctAnswer: false),
+            image: "The Ice Age Adventures of Buck Wild",
+            text: "Рейтинг этого фильма больше чем 6?",
+            correctAnswer: false),
         QuizQuestion(
-                    image: "Tesla",
-                    text: "Рейтинг этого фильма больше чем 6?",
-                    correctAnswer: false),
+            image: "Tesla",
+            text: "Рейтинг этого фильма больше чем 6?",
+            correctAnswer: false),
         QuizQuestion(
-                    image: "Vivarium",
-                    text: "Рейтинг этого фильма больше чем 6?",
-                    correctAnswer: false)
-        ]
+            image: "Vivarium",
+            text: "Рейтинг этого фильма больше чем 6?",
+            correctAnswer: false)
+    ]
     private var currentQuestionIndex = 0
     private var correctAnswers = 0
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
@@ -67,20 +75,74 @@ final class MovieQuizViewController: UIViewController {
         questionLable.text = step.question
         counterLable.text = step.questionNumber
     }
+    private func showAnswerResult(isCorrect: Bool) {
+        imageView.layer.masksToBounds = true
+        imageView.layer.borderWidth = 8
+        if isCorrect{
+            correctAnswers += 1
+            imageView.layer.borderColor = UIColor.ypGreen.cgColor
+        }
+        else {
+            imageView.layer.borderColor = UIColor.ypRed.cgColor
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                self.showNextQuestionOrResults()
+            }
+        
+    }
+    private func showNextQuestionOrResults() {
+        if currentQuestionIndex == questions.count - 1 {
+            let text = "Ваш результат: \(correctAnswers)/10" // 1
+            let viewModel = QuizResultsViewModel( // 2
+                title: "Этот раунд окончен!",
+                text: text,
+                buttonText: "Сыграть ещё раз")
+            imageView.layer.borderColor = nil
+            show(quiz: viewModel)
+            
+        }
+        else {
+            currentQuestionIndex += 1
+            imageView.layer.borderColor = nil //убирает постоянное подсвечивание рамки при переключении вопросов
+            let nextQuestion = questions[currentQuestionIndex]
+            let viewModel = convert(model: nextQuestion)
+            show(quiz: viewModel)
+            
+            }
+        }
+    private func show(quiz result: QuizResultsViewModel) {
+        let alert = UIAlertController(
+            title: result.title,
+            message: result.text,
+            preferredStyle: .alert)
+        let action = UIAlertAction(title: result.buttonText, style: .default) { _ in
+            self.currentQuestionIndex = 0
+            self.correctAnswers = 0
+            
+        let firstQuestion = self.questions[self.currentQuestionIndex]
+        let viewModel = self.convert(model: firstQuestion)
+        self.show(quiz: viewModel)
+        }
+        
+        alert.addAction(action)
+        
+        self.present(alert, animated: true, completion: nil)
+    }
 }
-struct QuizStepViewModel {
+
+private struct QuizStepViewModel {
   let image: UIImage
   let question: String
   let questionNumber: String
 }
 
 // для состояния "Результат квиза"
-struct QuizResultsViewModel {
+private struct QuizResultsViewModel {
   let title: String
   let text: String
   let buttonText: String
 }
-struct QuizQuestion {
+private struct QuizQuestion {
     // строка с названием фильма,
     // совпадает с названием картинки афиши фильма в Assets
     let image: String
