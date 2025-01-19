@@ -16,14 +16,16 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LaunchScreen" translatesAutoresizingMaskIntoConstraints="NO" id="sdi-oJ-GET">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LaunchScreen" translatesAutoresizingMaskIntoConstraints="NO" id="sdi-oJ-GET">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="sdi-oJ-GET" firstAttribute="width" secondItem="Ze5-6b-2t3" secondAttribute="width" id="0Zg-IE-J20"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="top" secondItem="sdi-oJ-GET" secondAttribute="top" constant="48" id="1Y4-vA-f6G"/>
+                            <constraint firstItem="sdi-oJ-GET" firstAttribute="height" secondItem="Ze5-6b-2t3" secondAttribute="height" id="CFx-SO-YQ8"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="sdi-oJ-GET" secondAttribute="trailing" id="Kp5-Zp-wqB"/>
                             <constraint firstItem="sdi-oJ-GET" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" constant="34" id="Ppw-wG-Ps6"/>
                             <constraint firstItem="sdi-oJ-GET" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="eYL-6c-61c"/>

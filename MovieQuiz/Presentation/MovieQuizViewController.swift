@@ -3,6 +3,8 @@ import UIKit
 final class MovieQuizViewController: UIViewController {
     @IBOutlet weak private var counterLable: UILabel!
     @IBOutlet weak private var questionLable: UILabel!
+    @IBOutlet weak var noButton: UIButton!
+    @IBOutlet weak var yesButton: UIButton!
     @IBOutlet weak private var imageView: UIImageView!
     // MARK: - Lifecycle
     override  func viewDidLoad() {
@@ -78,6 +80,8 @@ final class MovieQuizViewController: UIViewController {
     private func showAnswerResult(isCorrect: Bool) {
         imageView.layer.masksToBounds = true
         imageView.layer.borderWidth = 8
+        noButton.isEnabled = false
+        yesButton.isEnabled = false
         if isCorrect{
             correctAnswers += 1
             imageView.layer.borderColor = UIColor.ypGreen.cgColor
@@ -106,7 +110,10 @@ final class MovieQuizViewController: UIViewController {
             imageView.layer.borderColor = nil //убирает постоянное подсвечивание рамки при переключении вопросов
             let nextQuestion = questions[currentQuestionIndex]
             let viewModel = convert(model: nextQuestion)
+            imageView.layer.borderWidth = 0
             show(quiz: viewModel)
+            noButton.isEnabled = true
+            yesButton.isEnabled = true
             
             }
         }
