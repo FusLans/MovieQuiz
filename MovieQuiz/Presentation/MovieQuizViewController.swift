@@ -1,6 +1,6 @@
 import UIKit
 
-final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
+final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate{
     @IBOutlet weak private var counterLable: UILabel!
     @IBOutlet weak private var questionLable: UILabel!
     @IBOutlet weak var noButton: UIButton!
@@ -102,23 +102,21 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             
         }
     }
+    
     private func show(quiz result: QuizResultsViewModel) {
-        let alert = UIAlertController(
-            title: result.title,
-            message: result.text,
-            preferredStyle: .alert)
-        let action = UIAlertAction(title: result.buttonText, style: .default) { [weak self] _ in
-            guard let self = self else {return}
-            
-            self.currentQuestionIndex = 0
-            self.correctAnswers = 0
-            questionFactory.requestNextQuestion()
-        }
-            alert.addAction(action)
-            self.present(alert, animated: true, completion: nil)
-        }
+        
+        AlertPresenter(controller: self).present(with:
+            AlertModel(title: result.title,
+                       message: result.text,
+                       buttonText: result.buttonText,
+                       completion: { [weak self] in
+                            guard let self = self else { return }
+                            self.currentQuestionIndex = 0
+                            self.correctAnswers = 0
+                            questionFactory.requestNextQuestion()
+                        }))
     }
-
+}
 
 
 
