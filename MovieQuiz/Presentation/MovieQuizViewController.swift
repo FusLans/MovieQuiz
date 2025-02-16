@@ -1,6 +1,6 @@
 import UIKit
 
-final class MovieQuizViewController: UIViewController {
+final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     @IBOutlet weak private var counterLable: UILabel!
     @IBOutlet weak private var questionLable: UILabel!
     @IBOutlet weak var noButton: UIButton!
@@ -9,11 +9,10 @@ final class MovieQuizViewController: UIViewController {
     // MARK: - Lifecycle
     override  func viewDidLoad() {
         super.viewDidLoad()
-        if let firstQuestion = questionFactory.requestNextQuestion() {
-            currentQuestion = firstQuestion
-            let viewModel = convert(model: firstQuestion)
-            show(quiz: viewModel)
-        }
+        let questionFactory = QuestionFactory()
+        questionFactory.setup(delegate: self)
+        self.questionFactory = questionFactory
+        questionFactory.requestNextQuestion()
     }
     @IBAction private func yesButtonClicked(_ sender: Any) {
         guard let currentQuestion = currentQuestion else {
@@ -31,10 +30,23 @@ final class MovieQuizViewController: UIViewController {
         let givenAnswer = false
         showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
     }
+    // MARK: - QuestionFactoryDelegate
+    func didReceiveNextQuestion(question: QuizQuestion?) {
+        // проверка, что вопрос не nil
+        guard let question = question else {
+               return
+           }
+           currentQuestion = question
+           let viewModel = convert(model: question)
+           
+           DispatchQueue.main.async { [weak self] in
+               self?.show(quiz: viewModel)
+           }
+    }
     private var currentQuestionIndex = 0
     private var correctAnswers = 0
     private let questionsAmount: Int = 10
-    private let questionFactory: QuestionFactoryProtocol = QuestionFactory()
+    private var questionFactory: QuestionFactoryProtocol = QuestionFactory()
     private var currentQuestion: QuizQuestion?
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
         let stepQuestion = QuizStepViewModel(
@@ -83,11 +95,7 @@ final class MovieQuizViewController: UIViewController {
         else {
             currentQuestionIndex += 1
             imageView.layer.borderColor = nil //убирает постоянное подсвечивание рамки при переключении вопросов
-            if let nextQuestion = questionFactory.requestNextQuestion() {
-                currentQuestion = nextQuestion
-                let viewModel = convert(model: nextQuestion)
-                show(quiz: viewModel)
-            }
+            questionFactory.requestNextQuestion()
             imageView.layer.borderWidth = 0
             noButton.isEnabled = true
             yesButton.isEnabled = true
@@ -101,16 +109,11 @@ final class MovieQuizViewController: UIViewController {
             preferredStyle: .alert)
         let action = UIAlertAction(title: result.buttonText, style: .default) { [weak self] _ in
             guard let self = self else {return}
-        }
+            
             self.currentQuestionIndex = 0
             self.correctAnswers = 0
-            
-            if let firstQuestion = self.questionFactory.requestNextQuestion() {
-                self.currentQuestion = firstQuestion
-                let viewModel = self.convert(model: firstQuestion)
-                
-                self.show(quiz: viewModel)
-            }
+            questionFactory.requestNextQuestion()
+        }
             alert.addAction(action)
             self.present(alert, animated: true, completion: nil)
         }
