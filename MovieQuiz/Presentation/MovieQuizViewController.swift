@@ -43,6 +43,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate{
                self?.show(quiz: viewModel)
            }
     }
+    private let statisticService:StatisticService = StatisticService()
     private var currentQuestionIndex = 0
     private var correctAnswers = 0
     private let questionsAmount: Int = 10
@@ -78,14 +79,23 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate{
         }
         
     }
+        
     private func showNextQuestionOrResults() {
         if currentQuestionIndex == questionsAmount - 1 {
+            
+            statisticService.store(correct: correctAnswers, total: questionsAmount)
+            
+            let resultText = "\nКоличество квизов: \(statisticService.gamesCount)\n" +
+            "Лучший результат: \(statisticService.bestGame.correct) (\(statisticService.bestGame.date.dateTimeString))\n" +
+            "Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%"
+            
             let text = correctAnswers == questionsAmount ?
             "Поздравляем, вы ответили на 10 из 10!" :
-            "Вы ответили на \(correctAnswers) из 10, попробуйте ещё раз!"// 1
+            "Вы ответили на \(correctAnswers) из 10, попробуйте ещё раз!"
+            
             let viewModel = QuizResultsViewModel( // 2
                 title: "Этот раунд окончен!",
-                text: text,
+                text: text + resultText,
                 buttonText: "Сыграть ещё раз")
             imageView.layer.borderColor = nil
             noButton.isEnabled = true
@@ -99,7 +109,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate{
             imageView.layer.borderWidth = 0
             noButton.isEnabled = true
             yesButton.isEnabled = true
-            
         }
     }
     
