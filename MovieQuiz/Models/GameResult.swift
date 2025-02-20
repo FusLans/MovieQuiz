@@ -1,6 +1,5 @@
 import Foundation
 
-
 struct GameResult: Codable {
     
     let correct: Int

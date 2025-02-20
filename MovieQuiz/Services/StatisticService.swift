@@ -1,6 +1,5 @@
 import Foundation
 
-
 final class StatisticService {
     
     private let storage: UserDefaults = .standard

@@ -1,8 +1,8 @@
 import UIKit
 
-class AlertPresenter {
+final class AlertPresenter {
     
-    private let controller: UIViewController
+    weak var controller: UIViewController?
     
     init(controller: UIViewController) {
         self.controller = controller
@@ -21,6 +21,6 @@ class AlertPresenter {
         
         alertController.addAction(action)
         
-        controller.present(alertController, animated: true)
+        controller?.present(alertController, animated: true)
     }
 }

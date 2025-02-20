@@ -43,7 +43,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate{
                self?.show(quiz: viewModel)
            }
     }
-    private let statisticService:StatisticService = StatisticService()
+    private let statisticService:StatisticServiceProtocol = StatisticService()
     private var currentQuestionIndex = 0
     private var correctAnswers = 0
     private let questionsAmount: Int = 10
@@ -111,11 +111,10 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate{
             yesButton.isEnabled = true
         }
     }
-    
+    private lazy var alertPresenter: AlertPresenter = AlertPresenter(controller: self)
     private func show(quiz result: QuizResultsViewModel) {
         
-        AlertPresenter(controller: self).present(with:
-            AlertModel(title: result.title,
+        let alertModel = AlertModel(title: result.title,
                        message: result.text,
                        buttonText: result.buttonText,
                        completion: { [weak self] in
@@ -123,7 +122,9 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate{
                             self.currentQuestionIndex = 0
                             self.correctAnswers = 0
                             questionFactory.requestNextQuestion()
-                        }))
+                        })
+        alertPresenter.present(with: alertModel)
+        
     }
 }
 
