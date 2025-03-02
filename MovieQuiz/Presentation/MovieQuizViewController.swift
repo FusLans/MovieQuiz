@@ -115,7 +115,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate{
         }
     }
     private lazy var alertPresenter: AlertPresenter = AlertPresenter(controller: self)
-    private func show(quiz result: QuizResultsViewModel) {
+    func show(quiz result: QuizResultsViewModel) {
         statisticService.store(correct: correctAnswers, total: presenter.questionsAmount)
         let resultText = "\nКоличество квизов: \(statisticService.gamesCount)\n" +
         "Лучший результат: \(statisticService.bestGame.correct) (\(statisticService.bestGame.date.dateTimeString))\n" +
