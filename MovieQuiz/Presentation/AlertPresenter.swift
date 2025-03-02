@@ -14,7 +14,7 @@ final class AlertPresenter: AlertPresenterProtocol{
             title: alertData.title,
             message: alertData.message,
             preferredStyle: .alert)
-        
+        alertController.view.accessibilityIdentifier = "alertController"
         let action = UIAlertAction(title: alertData.buttonText, style: .default) { _ in
             alertData.completion()
         }
