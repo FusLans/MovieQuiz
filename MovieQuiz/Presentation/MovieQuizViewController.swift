@@ -11,43 +11,27 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate{
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        presenter.viewController = self
         imageView.layer.cornerRadius = 20
         questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
         statisticService = StatisticService()
         questionFactory?.loadData()
     }
     @IBAction private func yesButtonClicked(_ sender: Any) {
-        guard let currentQuestion = currentQuestion else {
-            return
-        }
-        let givenAnswer = true
-        showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
+
+        presenter.yesButtonClicked()
         noButton.isEnabled = false
         yesButton.isEnabled = false
     }
     
     @IBAction private func noButtonClicked(_ sender: Any) {
-        guard let currentQuestion = currentQuestion else {
-            return
-        }
-        let givenAnswer = false
-        showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
+        presenter.noButtonClicked()
         noButton.isEnabled = false
         yesButton.isEnabled = false
     }
     // MARK: - QuestionFactoryDelegate
     func didReceiveNextQuestion(question: QuizQuestion?) {
-        // проверка, что вопрос не nil
-        guard let question = question else {
-            return
-        }
-        currentQuestion = question
-        let viewModel = presenter.convert(model: question)
-        
-        DispatchQueue.main.async { [weak self] in
-            self?.show(quiz: viewModel)
-        }
+        presenter.didReceiveNextQuestion(question: question)
     }
     private func showLoadingIndicator() {
         activityIndicator.isHidden = false
@@ -80,13 +64,12 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate{
     private var correctAnswers = 0
     private let presenter = MovieQuizPresenter()
     private var questionFactory: QuestionFactoryProtocol?
-    private var currentQuestion: QuizQuestion?
-    private func show(quiz step: QuizStepViewModel) {
+    func show(quiz step: QuizStepViewModel) {
         imageView.image = step.image
         questionLable.text = step.question
         counterLable.text = step.questionNumber
     }
-    private func showAnswerResult(isCorrect: Bool) {
+     func showAnswerResult(isCorrect: Bool) {
         imageView.layer.masksToBounds = true
         imageView.layer.borderWidth = 8
         if isCorrect{
@@ -107,22 +90,16 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate{
         }
     }
     
-    private func showNextQuestionOrResults() {
+        func showNextQuestionOrResults() {
         if presenter.isLastQuestion() {
-            
-            statisticService.store(correct: correctAnswers, total: presenter.questionsAmount)
-            
-            let resultText = "\nКоличество квизов: \(statisticService.gamesCount)\n" +
-            "Лучший результат: \(statisticService.bestGame.correct) (\(statisticService.bestGame.date.dateTimeString))\n" +
-            "Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%"
-            
+
             let text = correctAnswers == presenter.questionsAmount ?
             "Поздравляем, вы ответили на 10 из 10!" :
             "Вы ответили на \(correctAnswers) из 10, попробуйте ещё раз!"
             
             let viewModel = QuizResultsViewModel( // 2
                 title: "Этот раунд окончен!",
-                text: text + resultText,
+                text: text,
                 buttonText: "Сыграть ещё раз")
             imageView.layer.borderColor = nil
             show(quiz: viewModel)
@@ -134,15 +111,17 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate{
             imageView.layer.borderColor = nil //убирает постоянное подсвечивание рамки при переключении вопросов
             questionFactory?.requestNextQuestion()
             imageView.layer.borderWidth = 0
-            //            noButton.isEnabled = true
-            //            yesButton.isEnabled = true
+
         }
     }
     private lazy var alertPresenter: AlertPresenter = AlertPresenter(controller: self)
     private func show(quiz result: QuizResultsViewModel) {
-        
+        statisticService.store(correct: correctAnswers, total: presenter.questionsAmount)
+        let resultText = "\nКоличество квизов: \(statisticService.gamesCount)\n" +
+        "Лучший результат: \(statisticService.bestGame.correct) (\(statisticService.bestGame.date.dateTimeString))\n" +
+        "Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%"
         let alertModel = AlertModel(title: result.title,
-                                    message: result.text,
+                                    message: result.text + resultText,
                                     buttonText: result.buttonText,
                                     completion: { [weak self] in
             guard let self = self else { return }
