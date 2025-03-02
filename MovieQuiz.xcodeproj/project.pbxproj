@@ -30,6 +30,10 @@
 		B54FB5412D63A95300A1D256 /* GameResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B54FB5402D63A95300A1D256 /* GameResult.swift */; };
 		B54FB5432D63AA3500A1D256 /* StatisticService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B54FB5422D63AA3500A1D256 /* StatisticService.swift */; };
 		B54FB5452D67CA0E00A1D256 /* AlertPresenterProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B54FB5442D67CA0E00A1D256 /* AlertPresenterProtocol.swift */; };
+		B54FB5472D6A0FA400A1D256 /* NetworkClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B54FB5462D6A0FA400A1D256 /* NetworkClient.swift */; };
+		B54FB5492D6A111D00A1D256 /* MostPopularMovies.swift in Sources */ = {isa = PBXBuildFile; fileRef = B54FB5482D6A111D00A1D256 /* MostPopularMovies.swift */; };
+		B54FB54B2D6A11D000A1D256 /* MoviesLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B54FB54A2D6A11D000A1D256 /* MoviesLoader.swift */; };
+		B54FB54D2D6A120100A1D256 /* MoviesLoaderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B54FB54C2D6A120100A1D256 /* MoviesLoaderProtocol.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -58,6 +62,10 @@
 		B54FB5402D63A95300A1D256 /* GameResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameResult.swift; sourceTree = "<group>"; };
 		B54FB5422D63AA3500A1D256 /* StatisticService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticService.swift; sourceTree = "<group>"; };
 		B54FB5442D67CA0E00A1D256 /* AlertPresenterProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertPresenterProtocol.swift; sourceTree = "<group>"; };
+		B54FB5462D6A0FA400A1D256 /* NetworkClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkClient.swift; sourceTree = "<group>"; };
+		B54FB5482D6A111D00A1D256 /* MostPopularMovies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MostPopularMovies.swift; sourceTree = "<group>"; };
+		B54FB54A2D6A11D000A1D256 /* MoviesLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoviesLoader.swift; sourceTree = "<group>"; };
+		B54FB54C2D6A120100A1D256 /* MoviesLoaderProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoviesLoaderProtocol.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +87,7 @@
 				A3A3E8B32D57B9FE006C7B6C /* QuizQuestion.swift */,
 				B54FB53A2D62229600A1D256 /* AlertModel.swift */,
 				B54FB5402D63A95300A1D256 /* GameResult.swift */,
+				B54FB5482D6A111D00A1D256 /* MostPopularMovies.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -92,6 +101,9 @@
 				B54FB53E2D63A8B200A1D256 /* StatisticServiceProtocol.swift */,
 				B54FB5422D63AA3500A1D256 /* StatisticService.swift */,
 				B54FB5442D67CA0E00A1D256 /* AlertPresenterProtocol.swift */,
+				B54FB5462D6A0FA400A1D256 /* NetworkClient.swift */,
+				B54FB54A2D6A11D000A1D256 /* MoviesLoader.swift */,
+				B54FB54C2D6A120100A1D256 /* MoviesLoaderProtocol.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -232,7 +244,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B54FB5492D6A111D00A1D256 /* MostPopularMovies.swift in Sources */,
+				B54FB5472D6A0FA400A1D256 /* NetworkClient.swift in Sources */,
 				AD5EE5DE284D7887003966EF /* UIColor+Extensions.swift in Sources */,
+				B54FB54D2D6A120100A1D256 /* MoviesLoaderProtocol.swift in Sources */,
 				B54FB53D2D62357400A1D256 /* AlertPresenter.swift in Sources */,
 				B54FB53B2D62229600A1D256 /* AlertModel.swift in Sources */,
 				AD7AFA552836189F00399704 /* Array+Extensions.swift in Sources */,
@@ -250,6 +265,7 @@
 				A3A3E8B22D57B9E9006C7B6C /* QuizResultsViewModel.swift in Sources */,
 				AD1ABAB42831907B00B3E448 /* SceneDelegate.swift in Sources */,
 				B54FB5432D63AA3500A1D256 /* StatisticService.swift in Sources */,
+				B54FB54B2D6A11D000A1D256 /* MoviesLoader.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

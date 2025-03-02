@@ -107,6 +107,9 @@
                                     </stackView>
                                 </subviews>
                             </stackView>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="gKB-5B-apI">
+                                <rect key="frame" x="197" y="438" width="20" height="20"/>
+                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" name="YP Background"/>
@@ -115,9 +118,12 @@
                             <constraint firstItem="oNu-KP-dbx" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="CVP-eD-KVc"/>
                             <constraint firstItem="oNu-KP-dbx" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="10" id="Myo-jl-8HQ"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="oNu-KP-dbx" secondAttribute="trailing" constant="20" id="S67-gO-GTN"/>
+                            <constraint firstItem="gKB-5B-apI" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="ZLr-iX-okO"/>
+                            <constraint firstItem="gKB-5B-apI" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="rSJ-zc-9xW"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="activityIndicator" destination="gKB-5B-apI" id="cLd-dI-e84"/>
                         <outlet property="counterLable" destination="dDU-6U-3yq" id="hbe-H9-fWM"/>
                         <outlet property="imageView" destination="1vM-Jf-KBx" id="9Ar-aV-B6j"/>
                         <outlet property="noButton" destination="SYN-2A-Cuz" id="uqY-DQ-Zed"/>
