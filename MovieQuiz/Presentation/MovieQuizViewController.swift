@@ -18,7 +18,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate{
         questionFactory?.loadData()
     }
     @IBAction private func yesButtonClicked(_ sender: Any) {
-
+        
         presenter.yesButtonClicked()
         noButton.isEnabled = false
         yesButton.isEnabled = false
@@ -69,51 +69,36 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate{
         questionLable.text = step.question
         counterLable.text = step.questionNumber
     }
-     func showAnswerResult(isCorrect: Bool) {
+    func showAnswerResult(isCorrect: Bool) {
         imageView.layer.masksToBounds = true
         imageView.layer.borderWidth = 8
         if isCorrect{
             correctAnswers += 1
             imageView.layer.borderColor = UIColor.ypGreen.cgColor
+            noButton.isEnabled = false
+            yesButton.isEnabled = false
         }
         else {
             imageView.layer.borderColor = UIColor.ypRed.cgColor
+            noButton.isEnabled = false
+            yesButton.isEnabled = false
         }
+        
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
             guard let self = self else { return }
-            self.showNextQuestionOrResults()
+            self.presenter.correctAnswers = self.correctAnswers
+            self.presenter.questionFactory = self.questionFactory
+            self.presenter.showNextQuestionOrResults()
+            imageView.layer.borderColor = nil
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) {
                 self.noButton.isEnabled = true
                 self.yesButton.isEnabled = true
             }
         }
+
     }
     
-        func showNextQuestionOrResults() {
-        if presenter.isLastQuestion() {
-
-            let text = correctAnswers == presenter.questionsAmount ?
-            "Поздравляем, вы ответили на 10 из 10!" :
-            "Вы ответили на \(correctAnswers) из 10, попробуйте ещё раз!"
-            
-            let viewModel = QuizResultsViewModel( // 2
-                title: "Этот раунд окончен!",
-                text: text,
-                buttonText: "Сыграть ещё раз")
-            imageView.layer.borderColor = nil
-            show(quiz: viewModel)
-            //            noButton.isEnabled = true
-            //            yesButton.isEnabled = true
-        }
-        else {
-            presenter.switchToNextQuestion()
-            imageView.layer.borderColor = nil //убирает постоянное подсвечивание рамки при переключении вопросов
-            questionFactory?.requestNextQuestion()
-            imageView.layer.borderWidth = 0
-
-        }
-    }
     private lazy var alertPresenter: AlertPresenter = AlertPresenter(controller: self)
     func show(quiz result: QuizResultsViewModel) {
         statisticService.store(correct: correctAnswers, total: presenter.questionsAmount)

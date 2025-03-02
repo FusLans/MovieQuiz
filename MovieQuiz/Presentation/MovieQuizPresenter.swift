@@ -6,7 +6,7 @@ final class MovieQuizPresenter {
     private var currentQuestionIndex = 0
     let questionsAmount: Int = 10
     var correctAnswers: Int = 0
-    private var questionFactory: QuestionFactoryProtocol?
+    var questionFactory: QuestionFactoryProtocol?
     func isLastQuestion() -> Bool {
         currentQuestionIndex == questionsAmount - 1
     }
@@ -40,7 +40,6 @@ final class MovieQuizPresenter {
         viewController?.showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
     }
     func didReceiveNextQuestion(question: QuizQuestion?) {
-        // проверка, что вопрос не nil
         guard let question = question else {
             return
         }
@@ -63,9 +62,7 @@ final class MovieQuizPresenter {
                 text: text,
                 buttonText: "Сыграть ещё раз")
             viewController?.show(quiz: viewModel)
-            //            imageView.layer.borderColor = nil
-            //            noButton.isEnabled = true
-            //            yesButton.isEnabled = true
+            
         }
         else {
             self.switchToNextQuestion()
