@@ -1,6 +1,6 @@
 import UIKit
 
-final class MovieQuizViewController: UIViewController{
+final class MovieQuizViewController: UIViewController, MovieQuizViewControllerProtocol{
     
     @IBOutlet weak private var counterLable: UILabel!
     @IBOutlet weak private var activityIndicator: UIActivityIndicatorView!
@@ -25,23 +25,13 @@ final class MovieQuizViewController: UIViewController{
     
     @IBAction private func yesButtonClicked(_ sender: UIButton) {
         presenter.yesButtonClicked()
-        falseEnableButton()
     }
     
     @IBAction private func noButtonClicked(_ sender: UIButton) {
         presenter.noButtonClicked()
-        falseEnableButton()
     }
     
     // MARK: - Private functions
-    private func falseEnableButton(){
-        yesButton.isEnabled = false
-        noButton.isEnabled = false
-    }
-    private func trueEnableButton(){
-        yesButton.isEnabled = true
-        noButton.isEnabled = true
-    }
     
     func show(quiz step: QuizStepViewModel) {
         imageView.layer.borderColor = UIColor.clear.cgColor
@@ -49,7 +39,7 @@ final class MovieQuizViewController: UIViewController{
         questionLable.text = step.question
         counterLable.text = step.questionNumber
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            self.trueEnableButton()
+            self.changeButtonState(isEnable: true)
         }
     }
     
@@ -70,7 +60,10 @@ final class MovieQuizViewController: UIViewController{
         alert.addAction(action)
         
         self.present(alert, animated: true, completion: nil)
-        trueEnableButton()
+    }
+    func changeButtonState(isEnable:Bool){
+        noButton.isEnabled = isEnable
+        yesButton.isEnabled = isEnable
     }
     
     func highlightImageBorder(isCorrectAnswer: Bool) {
