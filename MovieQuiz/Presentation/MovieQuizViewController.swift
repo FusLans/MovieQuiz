@@ -88,22 +88,15 @@ final class MovieQuizViewController: UIViewController{
         activityIndicator.isHidden = true
         activityIndicator.stopAnimating()
     }
-    
-    func showNetworkError(message: String) {
-        hideLoadingIndicator()
-        
-        let alert = UIAlertController(
-            title: "Ошибка",
-            message: message,
-            preferredStyle: .alert)
-        
-        let action = UIAlertAction(title: "Попробовать ещё раз",
-                                   style: .default) { [weak self] _ in
-            guard let self = self else { return }
+    private lazy var alertPresenter: AlertPresenter = AlertPresenter(controller: self)
+    func showNetworkError(message: String){
+            hideLoadingIndicator()
             
-            self.presenter.restartGame()
-        }
+            let model = AlertModel(title: "Ошибка", message: message, buttonText: "Попробовать еще раз", completion: {[weak self] in guard let self = self else {return}
+                presenter.restartGame()
+                showLoadingIndicator()
+            })
         
-        alert.addAction(action)
-    }
+            alertPresenter.present(with: model)
+        }
 }
