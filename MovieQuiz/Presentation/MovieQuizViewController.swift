@@ -1,6 +1,6 @@
 import UIKit
 
-final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate{
+final class MovieQuizViewController: UIViewController{
     
     @IBOutlet weak private var counterLable: UILabel!
     @IBOutlet weak private var activityIndicator: UIActivityIndicatorView!
@@ -9,179 +9,101 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate{
     @IBOutlet weak private var yesButton: UIButton!
     @IBOutlet weak private var imageView: UIImageView!
     // MARK: - Lifecycle
+    private var presenter: MovieQuizPresenter!
+    
+    // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        presenter.viewController = self
+        
+        presenter = MovieQuizPresenter(viewController: self)
+        
         imageView.layer.cornerRadius = 20
-        questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
-        statisticService = StatisticService()
-        questionFactory?.loadData()
     }
-    @IBAction private func yesButtonClicked(_ sender: Any) {
-        
+    
+    // MARK: - Actions
+    
+    @IBAction private func yesButtonClicked(_ sender: UIButton) {
         presenter.yesButtonClicked()
-        noButton.isEnabled = false
-        yesButton.isEnabled = false
+        falseEnableButton()
     }
     
-    @IBAction private func noButtonClicked(_ sender: Any) {
+    @IBAction private func noButtonClicked(_ sender: UIButton) {
         presenter.noButtonClicked()
-        noButton.isEnabled = false
-        yesButton.isEnabled = false
-    }
-    // MARK: - QuestionFactoryDelegate
-    func didReceiveNextQuestion(question: QuizQuestion?) {
-        presenter.didReceiveNextQuestion(question: question)
-    }
-    private func showLoadingIndicator() {
-        activityIndicator.isHidden = false
-        activityIndicator.startAnimating()
-    }
-    private func hideLoadingIndicator() {
-        activityIndicator.isHidden = true
-        activityIndicator.stopAnimating()
-    }
-    private func showNetworkError(message: String){
-        hideLoadingIndicator()
-        
-        let model = AlertModel(title: "Ошибка", message: message, buttonText: "Попробовать еще раз", completion: {[weak self] in guard let self = self else {return}
-            presenter.resetQuestionIndex()
-            
-            didLoadDataFromServer()
-        })
-        alertPresenter.present(with: model)
-    }
-    func didLoadDataFromServer() {
-        hideLoadingIndicator()
-        questionFactory?.requestNextQuestion()
+        falseEnableButton()
     }
     
-    func didFailToLoadData(with error: any Error) {
-        showLoadingIndicator()
-        showNetworkError(message: error.localizedDescription)
+    // MARK: - Private functions
+    private func falseEnableButton(){
+        yesButton.isEnabled = false
+        noButton.isEnabled = false
     }
-    private var statisticService:StatisticServiceProtocol = StatisticService()
-    private var correctAnswers = 0
-    private let presenter = MovieQuizPresenter()
-    private var questionFactory: QuestionFactoryProtocol?
+    private func trueEnableButton(){
+        yesButton.isEnabled = true
+        noButton.isEnabled = true
+    }
+    
     func show(quiz step: QuizStepViewModel) {
+        imageView.layer.borderColor = UIColor.clear.cgColor
         imageView.image = step.image
         questionLable.text = step.question
         counterLable.text = step.questionNumber
-    }
-    func showAnswerResult(isCorrect: Bool) {
-        imageView.layer.masksToBounds = true
-        imageView.layer.borderWidth = 8
-        if isCorrect{
-            correctAnswers += 1
-            imageView.layer.borderColor = UIColor.ypGreen.cgColor
-            noButton.isEnabled = false
-            yesButton.isEnabled = false
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            self.trueEnableButton()
         }
-        else {
-            imageView.layer.borderColor = UIColor.ypRed.cgColor
-            noButton.isEnabled = false
-            yesButton.isEnabled = false
-        }
-        
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-            guard let self = self else { return }
-            self.presenter.correctAnswers = self.correctAnswers
-            self.presenter.questionFactory = self.questionFactory
-            self.presenter.showNextQuestionOrResults()
-            imageView.layer.borderColor = nil
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) {
-                self.noButton.isEnabled = true
-                self.yesButton.isEnabled = true
-            }
-        }
-
     }
     
-    private lazy var alertPresenter: AlertPresenter = AlertPresenter(controller: self)
     func show(quiz result: QuizResultsViewModel) {
-        statisticService.store(correct: correctAnswers, total: presenter.questionsAmount)
-        let resultText = "\nКоличество квизов: \(statisticService.gamesCount)\n" +
-        "Лучший результат: \(statisticService.bestGame.correct) (\(statisticService.bestGame.date.dateTimeString))\n" +
-        "Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%"
-        let alertModel = AlertModel(title: result.title,
-                                    message: result.text + resultText,
-                                    buttonText: result.buttonText,
-                                    completion: { [weak self] in
-            guard let self = self else { return }
-            presenter.resetQuestionIndex()
-            self.correctAnswers = 0
-            questionFactory?.requestNextQuestion()
-        })
-        alertPresenter.present(with: alertModel)
+        let message = presenter.makeResultsMessage()
         
+        let alert = UIAlertController(
+            title: result.title,
+            message: message,
+            preferredStyle: .alert)
+        
+        let action = UIAlertAction(title: result.buttonText, style: .default) { [weak self] _ in
+            guard let self = self else { return }
+            
+            self.presenter.restartGame()
+        }
+        
+        alert.addAction(action)
+        
+        self.present(alert, animated: true, completion: nil)
+        trueEnableButton()
+    }
+    
+    func highlightImageBorder(isCorrectAnswer: Bool) {
+        imageView.layer.masksToBounds = true
+        imageView.layer.borderWidth = 8
+        imageView.layer.borderColor = isCorrectAnswer ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
+    }
+    
+    func showLoadingIndicator() {
+        activityIndicator.isHidden = false 
+        activityIndicator.startAnimating()
+    }
+    
+    func hideLoadingIndicator() {
+        activityIndicator.isHidden = true
+        activityIndicator.stopAnimating()
+    }
+    
+    func showNetworkError(message: String) {
+        hideLoadingIndicator()
+        
+        let alert = UIAlertController(
+            title: "Ошибка",
+            message: message,
+            preferredStyle: .alert)
+        
+        let action = UIAlertAction(title: "Попробовать ещё раз",
+                                   style: .default) { [weak self] _ in
+            guard let self = self else { return }
+            
+            self.presenter.restartGame()
+        }
+        
+        alert.addAction(action)
     }
 }
-
-
-
-
-/*
- Mock-данные
- 
- 
- Картинка: The Godfather
- Настоящий рейтинг: 9,2
- Вопрос: Рейтинг этого фильма больше чем 6?
- Ответ: ДА
- 
- 
- Картинка: The Dark Knight
- Настоящий рейтинг: 9
- Вопрос: Рейтинг этого фильма больше чем 6?
- Ответ: ДА
- 
- 
- Картинка: Kill Bill
- Настоящий рейтинг: 8,1
- Вопрос: Рейтинг этого фильма больше чем 6?
- Ответ: ДА
- 
- 
- Картинка: The Avengers
- Настоящий рейтинг: 8
- Вопрос: Рейтинг этого фильма больше чем 6?
- Ответ: ДА
- 
- 
- Картинка: Deadpool
- Настоящий рейтинг: 8
- Вопрос: Рейтинг этого фильма больше чем 6?
- Ответ: ДА
- 
- 
- Картинка: The Green Knight
- Настоящий рейтинг: 6,6
- Вопрос: Рейтинг этого фильма больше чем 6?
- Ответ: ДА
- 
- 
- Картинка: Old
- Настоящий рейтинг: 5,8
- Вопрос: Рейтинг этого фильма больше чем 6?
- Ответ: НЕТ
- 
- 
- Картинка: The Ice Age Adventures of Buck Wild
- Настоящий рейтинг: 4,3
- Вопрос: Рейтинг этого фильма больше чем 6?
- Ответ: НЕТ
- 
- 
- Картинка: Tesla
- Настоящий рейтинг: 5,1
- Вопрос: Рейтинг этого фильма больше чем 6?
- Ответ: НЕТ
- 
- 
- Картинка: Vivarium
- Настоящий рейтинг: 5,8
- Вопрос: Рейтинг этого фильма больше чем 6?
- Ответ: НЕТ
- */
