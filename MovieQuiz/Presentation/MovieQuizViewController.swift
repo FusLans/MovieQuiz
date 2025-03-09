@@ -19,6 +19,8 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
         presenter = MovieQuizPresenter(viewController: self)
         
         imageView.layer.cornerRadius = 20
+        showLoadingIndicator()
+        self.presenter.restartGame()
     }
     
     // MARK: - Actions

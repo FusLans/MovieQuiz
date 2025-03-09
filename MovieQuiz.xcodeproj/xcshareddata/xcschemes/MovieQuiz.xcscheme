@@ -57,7 +57,7 @@
             parallelizable = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B54FB6212D7DFB2B00A1D256"
+               BlueprintIdentifier = "B54FB6632D7E02A000A1D256"
                BuildableName = "MovieQuizViewControllerMock.xctest"
                BlueprintName = "MovieQuizViewControllerMock"
                ReferencedContainer = "container:MovieQuiz.xcodeproj">

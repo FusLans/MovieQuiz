@@ -1,8 +1,10 @@
 import XCTest
 @testable import MovieQuiz
+
 final class MovieQuizViewControllerMock: MovieQuizViewControllerProtocol {
     func changeButtonState(isEnable: Bool) {
     }
+    
     func show(quiz step: QuizStepViewModel) {
     
     }
@@ -42,3 +44,4 @@ final class MovieQuizPresenterTests: XCTestCase {
         XCTAssertEqual(viewModel.questionNumber, "1/10")
     }
 }
+

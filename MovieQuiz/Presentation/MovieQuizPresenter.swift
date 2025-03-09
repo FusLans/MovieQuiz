@@ -10,7 +10,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     private var currentQuestionIndex: Int = 0
     private var correctAnswers: Int = 0
 
-    init(viewController: MovieQuizViewController) {
+    init(viewController: MovieQuizViewControllerProtocol) {
         self.viewController = viewController
 
         statisticService = StatisticService()
@@ -52,7 +52,6 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         if isCorrectAnswer {
             correctAnswers += 1
         }
-        viewController?.changeButtonState(isEnable: false)
     }
 
     func restartGame() {
@@ -89,6 +88,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         let givenAnswer = isYes
 
         proceedWithAnswer(isCorrect: givenAnswer == currentQuestion.correctAnswer)
+        viewController?.changeButtonState(isEnable: false)
     }
 
     private func proceedWithAnswer(isCorrect: Bool) {
