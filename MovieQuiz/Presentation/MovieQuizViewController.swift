@@ -40,7 +40,7 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
         imageView.image = step.image
         questionLable.text = step.question
         counterLable.text = step.questionNumber
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {[weak self] in guard let self = self else { return }
             self.changeButtonState(isEnable: true)
         }
     }
@@ -48,20 +48,11 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
     func show(quiz result: QuizResultsViewModel) {
         let message = presenter.makeResultsMessage()
         
-        let alert = UIAlertController(
-            title: result.title,
-            message: message,
-            preferredStyle: .alert)
-        
-        let action = UIAlertAction(title: result.buttonText, style: .default) { [weak self] _ in
-            guard let self = self else { return }
-            
+        let resultModel = AlertModel(title: "Этот раунд окончен!", message: message, buttonText: "Сыграть ещё раз", completion:{
             self.presenter.restartGame()
-        }
+        })
         
-        alert.addAction(action)
-        
-        self.present(alert, animated: true, completion: nil)
+        alertPresenter.present(with: resultModel)
     }
     func changeButtonState(isEnable:Bool){
         noButton.isEnabled = isEnable

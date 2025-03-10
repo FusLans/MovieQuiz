@@ -133,7 +133,11 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         let resultMessage = [
         currentGameResultLine, totalPlaysCountLine, bestGameInfoLine, averageAccuracyLine
         ].joined(separator: "\n")
+        let text = correctAnswers == self.questionsAmount ?
+        "Поздравляем, вы ответили на 10 из 10!" :
+        "Вы ответили на \(correctAnswers) из 10, попробуйте ещё раз!"
+        let resultText = text+"\n"+resultMessage
 
-        return resultMessage
+        return resultText
     }
 }
